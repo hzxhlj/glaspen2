@@ -6,37 +6,13 @@ fn width_r(p: f32, scale: f32) -> f32 {
     (glaspen_core::modeler::pressure_to_width(p as f64, scale.max(0.05) as f64) * 0.5) as f32
 }
 
-/// 由中心线点列(x, y, 半径)构建可变宽度轮廓:
-/// 每点沿法线 ±偏移半径,返回闭合轮廓点列(左边界正向 + 右边界反向)。
-/// 法线用中点差分(前后点方向),保证相邻带在共享点处偏移一致,无缝衔接。
+/// 由中心线点列构建可变宽度轮廓:
+/// 先按 centripetal Catmull-Rom 把采样点细分到 ~1.5px 步长, 再沿法线 ±偏移
+/// 半径(见 core::inkgeom)。细分是关键一步 —— 模型器按 120Hz 时间采样, 笔速快
+/// 时相邻点十几像素一段, 直接连折线会把圆弧画成肉眼可见的折角; 细分后侧边
+/// 贴住一条真正光滑的曲线, 线宽过渡也不再在采样点处留台阶。
 fn build_outline(pts: &[(f32, f32, f32)]) -> Vec<(f32, f32)> {
-    let n = pts.len();
-    if n < 2 {
-        return vec![];
-    }
-    let mut left = Vec::with_capacity(n);
-    let mut right = Vec::with_capacity(n);
-    for i in 0..n {
-        let (x, y, r) = pts[i];
-        let (dx, dy) = if i == 0 {
-            (pts[1].0 - x, pts[1].1 - y)
-        } else if i == n - 1 {
-            (x - pts[i - 1].0, y - pts[i - 1].1)
-        } else {
-            (pts[i + 1].0 - pts[i - 1].0, pts[i + 1].1 - pts[i - 1].1)
-        };
-        let l = (dx * dx + dy * dy).sqrt();
-        let (nx, ny) = if l > 1e-6 {
-            (-dy / l, dx / l)
-        } else {
-            (1.0, 0.0)
-        };
-        left.push((x + nx * r, y + ny * r));
-        right.push((x - nx * r, y - ny * r));
-    }
-    let mut outline = left;
-    outline.extend(right.iter().rev());
-    outline
+    glaspen_core::inkgeom::densified_outline(pts, glaspen_core::inkgeom::DENSIFY_STEP)
 }
 
 /// 合并脏矩形
@@ -88,12 +64,13 @@ fn fill_stroke_path(
         }
     }
 
-    // 主体
+    // 主体: 细分后的光滑轮廓(轮廓两端已自带半圆笔帽)
     let outline = build_outline(path);
     if outline.len() >= 3 {
         let rect = canvas.fill_outline(&outline);
         merge_rect(&mut dirty, &rect);
     }
+    // 端点圆点保留(与轮廓笔帽同色重叠): 轮廓退化时仍有圆头, 双保险
     if let Some(&(cx, cy, r)) = path.first() {
         let rect = canvas.fill_dot(cx, cy, r);
         merge_rect(&mut dirty, &rect);
