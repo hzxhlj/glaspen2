@@ -1,0 +1,405 @@
+# windows-build 2026-11-16T12:47:02Z  ref=main  status=success
+
+===== /tmp/test.log =====
+[1m[92m   Compiling[0m pathfinder_geometry v0.5.1
+[1m[92m   Compiling[0m v_frame v0.3.9
+[1m[92m   Compiling[0m sha2 v0.10.9
+[1m[92m   Compiling[0m futures-intrusive v0.5.0
+[1m[92m   Compiling[0m num-rational v0.4.2
+[1m[92m   Compiling[0m regex v1.13.1
+[1m[92m   Compiling[0m cipher v0.4.4
+[1m[92m   Compiling[0m brotli-decompressor v5.0.3
+[1m[92m   Compiling[0m hyphenation_commons v0.8.4
+[1m[92m   Compiling[0m crossbeam-queue v0.3.13
+[1m[92m   Compiling[0m bincode v1.3.3
+[1m[92m   Compiling[0m windows-implement v0.60.2
+[1m[92m   Compiling[0m windows-interface v0.59.3
+[1m[92m   Compiling[0m as-slice v0.2.1
+[1m[92m   Compiling[0m slotmap v1.1.1
+[1m[92m   Compiling[0m windows-strings v0.5.1
+[1m[92m   Compiling[0m windows-result v0.4.1
+[1m[92m   Compiling[0m getrandom v0.2.17
+[1m[92m   Compiling[0m untrusted v0.9.0
+[1m[92m   Compiling[0m ucd-trie v0.1.7
+[1m[92m   Compiling[0m built v0.8.0
+[1m[92m   Compiling[0m tower-layer v0.3.3
+[1m[92m   Compiling[0m rustc-hash v1.1.0
+[1m[92m   Compiling[0m paste v1.0.15
+[1m[92m   Compiling[0m multimap v0.10.1
+[1m[92m   Compiling[0m sync_wrapper v1.0.2
+[1m[92m   Compiling[0m av-scenechange v0.14.1
+[1m[92m   Compiling[0m glyph-names v0.2.0
+[1m[92m   Compiling[0m httpdate v1.0.3
+[1m[92m   Compiling[0m pocket-resources v0.3.2
+[1m[92m   Compiling[0m hyphenation v0.8.4
+[1m[92m   Compiling[0m allsorts-azul v0.16.5
+[1m[92m   Compiling[0m hyper v1.11.1
+[1m[92m   Compiling[0m rav1e v0.8.1
+[1m[92m   Compiling[0m prost-build v0.13.5
+[1m[92m   Compiling[0m sqlx-core v0.8.6
+[1m[92m   Compiling[0m windows-core v0.62.2
+[1m[92m   Compiling[0m aligned v0.4.3
+[1m[92m   Compiling[0m mmapio v0.9.1
+[1m[92m   Compiling[0m atoi v2.0.0
+[1m[92m   Compiling[0m rand_core v0.9.5
+[1m[92m   Compiling[0m windows-targets v0.52.6
+[1m[92m   Compiling[0m futures-executor v0.3.32
+[1m[92m   Compiling[0m serde_urlencoded v0.7.1
+[1m[92m   Compiling[0m flume v0.11.1
+[1m[92m   Compiling[0m ppv-lite86 v0.2.21
+[1m[92m   Compiling[0m http-body-util v0.1.5
+[1m[92m   Compiling[0m unicode-normalization v0.1.25
+[1m[92m   Compiling[0m arg_enum_proc_macro v0.3.4
+[1m[92m   Compiling[0m profiling-procmacros v1.0.18
+[1m[92m   Compiling[0m hybrid-array v0.4.15
+[1m[92m   Compiling[0m no_std_io2 v0.9.4
+[1m[92m   Compiling[0m pastey v0.1.1
+[1m[92m   Compiling[0m y4m v0.8.0
+[1m[92m   Compiling[0m mime v0.3.17
+[1m[92m   Compiling[0m jiff-tzdb v0.1.8
+[1m[92m   Compiling[0m unicode-bidi v0.3.18
+[1m[92m   Compiling[0m rustls v0.23.45
+[1m[92m   Compiling[0m azul-simplecss v0.2.0
+[1m[92m   Compiling[0m quick-error v2.0.1
+[1m[92m   Compiling[0m azul-css v0.0.8
+[1m[92m   Compiling[0m jiff-tzdb-platform v0.1.3
+[1m[92m   Compiling[0m axum-core v0.5.6
+[1m[92m   Compiling[0m profiling v1.0.18
+[1m[92m   Compiling[0m bitstream-io v4.10.0
+[1m[92m   Compiling[0m sqlx-sqlite v0.8.6
+[1m[92m   Compiling[0m rand_chacha v0.9.0
+[1m[92m   Compiling[0m windows-sys v0.52.0
+[1m[92m   Compiling[0m rustls-webpki v0.103.15
+[1m[92m   Compiling[0m rust-fontconfig v4.4.4
+[1m[92m   Compiling[0m hyper-util v0.1.20
+[1m[92m   Compiling[0m tonic-build v0.13.1
+[1m[92m   Compiling[0m tower v0.5.3
+[1m[92m   Compiling[0m av1-grain v0.2.5
+[1m[92m   Compiling[0m maybe-rayon v0.1.1
+[1m[92m   Compiling[0m half v2.7.1
+[1m[92m   Compiling[0m num-derive v0.4.2
+[1m[92m   Compiling[0m pin-project-internal v1.1.13
+[1m[92m   Compiling[0m deranged v0.5.8
+[1m[92m   Compiling[0m simd_helpers v0.1.0
+[1m[92m   Compiling[0m syn v3.0.5
+[1m[92m   Compiling[0m color_quant v1.1.0
+[1m[92m   Compiling[0m noop_proc_macro v0.3.0
+[1m[92m   Compiling[0m matchit v0.8.4
+[1m[92m   Compiling[0m unicode-properties v0.1.4
+[1m[92m   Compiling[0m powerfmt v0.2.0
+[1m[92m   Compiling[0m gl-context-loader v0.1.10
+[1m[92m   Compiling[0m dotenvy v0.15.7
+[1m[92m   Compiling[0m zune-core v0.5.1
+[1m[92m   Compiling[0m grid v1.0.1
+[1m[92m   Compiling[0m time-core v0.1.9
+[1m[92m   Compiling[0m subtle v2.6.1
+[1m[92m   Compiling[0m new_debug_unreachable v1.0.6
+[1m[92m   Compiling[0m bytecount v0.6.9
+[1m[92m   Compiling[0m hex v0.4.3
+[1m[92m   Compiling[0m base64 v0.23.1
+[1m[92m   Compiling[0m imgref v1.12.1
+[1m[92m   Compiling[0m num-conv v0.2.2
+[1m[92m   Compiling[0m sqlx-macros-core v0.8.6
+[1m[92m   Compiling[0m time v0.3.53
+[1m[92m   Compiling[0m ureq-proto v0.6.4
+[1m[92m   Compiling[0m loop9 v0.1.5
+[1m[92m   Compiling[0m nom_locate v5.0.0
+[1m[92m   Compiling[0m taffy v0.10.1
+[1m[92m   Compiling[0m async-trait v0.1.92
+[1m[92m   Compiling[0m zune-jpeg v0.5.15
+[1m[92m   Compiling[0m azul-core v0.0.8
+[1m[92m   Compiling[0m stringprep v0.1.5
+[1m[92m   Compiling[0m axum v0.8.9
+[1m[92m   Compiling[0m pin-project v1.1.13
+[1m[92m   Compiling[0m hyper-timeout v0.5.2
+[1m[92m   Compiling[0m glaspen-chat v0.6.0 (D:\a\glaspen2\glaspen2\chat)
+[1m[92m   Compiling[0m socket2 v0.5.10
+[1m[92m   Compiling[0m rand v0.9.4
+[1m[92m   Compiling[0m jiff v0.2.32
+[1m[92m   Compiling[0m crypto-common v0.2.2
+[1m[92m   Compiling[0m block-buffer v0.12.1
+[1m[92m   Compiling[0m ecb v0.1.2
+[1m[92m   Compiling[0m cbc v0.1.2
+[1m[92m   Compiling[0m aes v0.8.4
+[1m[92m   Compiling[0m webpki-roots v1.0.9
+[1m[92m   Compiling[0m md-5 v0.10.6
+[1m[92m   Compiling[0m avif-serialize v0.8.9
+[1m[92m   Compiling[0m zune-inflate v0.2.54
+[1m[92m   Compiling[0m fdeflate v0.3.7
+[1m[92m   Compiling[0m chrono v0.4.45
+[1m[92m   Compiling[0m roxmltree v0.21.1
+[1m[92m   Compiling[0m windows-threading v0.2.1
+[1m[92m   Compiling[0m ttf-parser v0.25.1
+[1m[92m   Compiling[0m bytemuck v1.25.0
+[1m[92m   Compiling[0m rgb v0.8.53
+[1m[92m   Compiling[0m byteorder-lite v0.1.0
+[1m[92m   Compiling[0m unicode-segmentation v1.13.3
+[1m[92m   Compiling[0m const-oid v0.10.2
+[1m[92m   Compiling[0m pxfm v0.1.29
+[1m[92m   Compiling[0m xmlparser v0.13.6
+[1m[92m   Compiling[0m xmlwriter v0.1.0
+[1m[92m   Compiling[0m fax v0.2.7
+[1m[92m   Compiling[0m lebe v0.5.3
+[1m[92m   Compiling[0m lru v0.16.4
+[1m[92m   Compiling[0m utf8-zero v0.8.1
+[1m[92m   Compiling[0m rangemap v1.7.1
+[1m[92m   Compiling[0m bit_field v0.10.3
+[1m[92m   Compiling[0m exr v1.74.0
+[1m[92m   Compiling[0m lopdf v0.39.0
+[1m[92m   Compiling[0m moxcms v0.8.1
+[1m[92m   Compiling[0m ureq v3.4.2
+[1m[92m   Compiling[0m azul-layout v0.0.9
+[1m[92m   Compiling[0m tiff v0.11.3
+[1m[92m   Compiling[0m digest v0.11.3
+[1m[92m   Compiling[0m image-webp v0.2.4
+[1m[92m   Compiling[0m ravif v0.13.0
+[1m[92m   Compiling[0m qoi v0.4.1
+[1m[92m   Compiling[0m windows-future v0.3.2
+[1m[92m   Compiling[0m png v0.18.1
+[1m[92m   Compiling[0m tonic v0.13.1
+[1m[92m   Compiling[0m sqlx-macros v0.8.6
+[1m[92m   Compiling[0m gif v0.14.2
+[1m[92m   Compiling[0m windows-collections v0.3.2
+[1m[92m   Compiling[0m windows-numerics v0.3.1
+[1m[92m   Compiling[0m glaspen-core v0.6.0 (D:\a\glaspen2\glaspen2\crates\glaspen-core)
+[1m[92m   Compiling[0m cpufeatures v0.3.1
+[1m[92m   Compiling[0m sha2 v0.11.0
+[1m[92m   Compiling[0m windows v0.62.2
+[1m[92m   Compiling[0m sqlx v0.8.6
+[1m[92m   Compiling[0m image v0.25.10
+[1m[92m   Compiling[0m gif v0.13.3
+[1m[92m   Compiling[0m ink-stroke-modeler-rs v0.1.0
+[1m[92m   Compiling[0m libloading v0.9.0
+[1m[92m   Compiling[0m printpdf v0.10.0
+[1m[93mwarning[0m[1m[97m: function `take_invert_dirty` is never used[0m
+   [1m[96m--> [0mcrates\glaspen-core\src\export\mod.rs:209:4
+    [1m[96m|[0m
+[1m[96m209[0m [1m[96m|[0m fn take_invert_dirty() -> Option<(c_double, c_double, c_double, c_double)> {
+    [1m[96m|[0m    [1m[93m^^^^^^^^^^^^^^^^^[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+[1m[93mwarning[0m[1m[97m: function `stroke_points` is never used[0m
+   [1m[96m--> [0mcrates\glaspen-core\src\export\mod.rs:599:15
+    [1m[96m|[0m
+[1m[96m599[0m [1m[96m|[0m pub(crate) fn stroke_points(s: &Stroke) -> StrokeView<'_> {
+    [1m[96m|[0m               [1m[93m^^^^^^^^^^^^^[0m
+
+[1m[93mwarning[0m: `glaspen-core` (lib test) generated 2 warnings
+[1m[92m    Finished[0m `test` profile [unoptimized] target(s) in 2m 38s
+[1m[92m     Running[0m unittests src\lib.rs (target\debug\build\glaspen-core/b21cfd6315f1251a\out\glaspen_core-b21cfd6315f1251a.exe)
+
+running 8 tests
+test inkgeom::tests::densify_keeps_endpoints ... ok
+test inkgeom::tests::densify_radius_stays_between_neighbours ... ok
+test inkgeom::tests::densified_outline_smooth_on_sharp_turn ... ok
+test inkgeom::tests::densify_spacing_roughly_matches_step ... ok
+test inkgeom::tests::densify_two_points_is_linear ... ok
+test inkgeom::tests::outline_is_closed_around_stroke ... ok
+test inkgeom::tests::outline_needs_two_points ... ok
+test inkgeom::tests::densify_caps_point_count ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 97 filtered out; finished in 0.00s
+
+
+===== /tmp/build.log =====
+[1m[92m   Compiling[0m roxmltree v0.21.1
+[1m[92m   Compiling[0m windows-threading v0.2.1
+[1m[92m   Compiling[0m lebe v0.5.3
+[1m[92m   Compiling[0m rgb v0.8.53
+[1m[92m   Compiling[0m bytemuck v1.25.0
+[1m[92m   Compiling[0m xmlwriter v0.1.0
+[1m[92m   Compiling[0m utf8-zero v0.8.1
+[1m[92m   Compiling[0m byteorder-lite v0.1.0
+[1m[92m   Compiling[0m ttf-parser v0.25.1
+[1m[92m   Compiling[0m xmlparser v0.13.6
+[1m[92m   Compiling[0m bit_field v0.10.3
+[1m[92m   Compiling[0m unicode-segmentation v1.13.3
+[1m[92m   Compiling[0m const-oid v0.10.2
+[1m[92m   Compiling[0m lru v0.16.4
+[1m[92m   Compiling[0m fax v0.2.7
+[1m[92m   Compiling[0m lazy_static v1.5.0
+[1m[92m   Compiling[0m pxfm v0.1.29
+[1m[92m   Compiling[0m rangemap v1.7.1
+[1m[92m   Compiling[0m lopdf v0.39.0
+[1m[92m   Compiling[0m moxcms v0.8.1
+[1m[92m   Compiling[0m tiff v0.11.3
+[1m[92m   Compiling[0m azul-layout v0.0.9
+[1m[92m   Compiling[0m digest v0.11.3
+[1m[92m   Compiling[0m exr v1.74.0
+[1m[92m   Compiling[0m image-webp v0.2.4
+[1m[92m   Compiling[0m ureq v3.4.2
+[1m[92m   Compiling[0m qoi v0.4.1
+[1m[92m   Compiling[0m ravif v0.13.0
+[1m[92m   Compiling[0m windows-future v0.3.2
+[1m[92m   Compiling[0m toml v1.1.6+spec-1.1.0
+[1m[92m   Compiling[0m png v0.18.1
+[1m[92m   Compiling[0m tonic v0.13.1
+[1m[92m   Compiling[0m sqlx-macros v0.8.6
+[1m[92m   Compiling[0m gif v0.14.2
+[1m[92m   Compiling[0m windows-collections v0.3.2
+[1m[92m   Compiling[0m windows-numerics v0.3.1
+[1m[92m   Compiling[0m glaspen-core v0.6.0 (D:\a\glaspen2\glaspen2\crates\glaspen-core)
+[1m[92m   Compiling[0m dart-sys v4.1.5
+[1m[92m   Compiling[0m rustc-demangle v0.1.28
+[1m[92m   Compiling[0m build-target v0.4.0
+[1m[92m   Compiling[0m portable-atomic v1.13.1
+[1m[92m   Compiling[0m cpufeatures v0.3.1
+[1m[92m   Compiling[0m sha2 v0.11.0
+[1m[92m   Compiling[0m flutter_rust_bridge v2.12.0
+[1m[92m   Compiling[0m backtrace v0.3.76
+[1m[92m   Compiling[0m windows v0.62.2
+[1m[92m   Compiling[0m image v0.25.10
+[1m[92m   Compiling[0m sqlx v0.8.6
+[1m[92m   Compiling[0m winresource v0.1.31
+[1m[92m   Compiling[0m matchers v0.2.0
+[1m[92m   Compiling[0m sharded-slab v0.1.7
+[1m[92m   Compiling[0m gif v0.13.3
+[1m[92m   Compiling[0m ink-stroke-modeler-rs v0.1.0
+[1m[92m   Compiling[0m tracing-log v0.2.0
+[1m[92m   Compiling[0m nu-ansi-term v0.50.3
+[1m[92m   Compiling[0m libloading v0.9.0
+[1m[92m   Compiling[0m thread_local v1.1.10
+[1m[92m   Compiling[0m atomic v0.5.3
+[1m[92m   Compiling[0m num_cpus v1.17.0
+[1m[92m   Compiling[0m threadpool v1.8.1
+[1m[92m   Compiling[0m allo-isolate v0.1.27
+[1m[92m   Compiling[0m tracing-subscriber v0.3.23
+[1m[92m   Compiling[0m flutter_rust_bridge_macros v2.12.0
+[1m[92m   Compiling[0m glaspen2 v0.6.0 (D:\a\glaspen2\glaspen2)
+[1m[92m   Compiling[0m futures v0.3.32
+[1m[92m   Compiling[0m delegate-attr v0.3.1
+[1m[92m   Compiling[0m crossbeam-channel v0.5.17
+[1m[92m   Compiling[0m byteorder v1.5.0
+[1m[92m   Compiling[0m symlink v0.1.0
+[1m[92m   Compiling[0m tracing-appender v0.2.5
+[1m[93mwarning[0m: glaspen2@0.6.0: Flutter settings: D:\a\glaspen2\glaspen2\flutter_settings\build\windows\x64\runner\Release\glaspen2_settings.exe
+[1m[93mwarning[0m: glaspen2@0.6.0: Cairo DLLs from vendor/win/cairo
+[1m[92m   Compiling[0m printpdf v0.10.0
+[1m[93mwarning[0m[1m[97m: function `take_invert_dirty` is never used[0m
+   [1m[96m--> [0mcrates\glaspen-core\src\export\mod.rs:209:4
+    [1m[96m|[0m
+[1m[96m209[0m [1m[96m|[0m fn take_invert_dirty() -> Option<(c_double, c_double, c_double, c_double)> {
+    [1m[96m|[0m    [1m[93m^^^^^^^^^^^^^^^^^[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+[1m[93mwarning[0m[1m[97m: function `stroke_points` is never used[0m
+   [1m[96m--> [0mcrates\glaspen-core\src\export\mod.rs:599:15
+    [1m[96m|[0m
+[1m[96m599[0m [1m[96m|[0m pub(crate) fn stroke_points(s: &Stroke) -> StrokeView<'_> {
+    [1m[96m|[0m               [1m[93m^^^^^^^^^^^^^[0m
+
+[1m[93mwarning[0m[1m[97m: function `signer_authorities` is never used[0m
+   [1m[96m--> [0mcrates\glaspen-core\src\update.rs:561:4
+    [1m[96m|[0m
+[1m[96m561[0m [1m[96m|[0m fn signer_authorities(output: &str) -> Vec<&str> {
+    [1m[96m|[0m    [1m[93m^^^^^^^^^^^^^^^^^^[0m
+
+[1m[92m   Compiling[0m glaspen-windows v0.6.0 (D:\a\glaspen2\glaspen2\crates\glaspen-windows)
+[1m[93mwarning[0m[1m[97m: unreachable pattern[0m
+   [1m[96m--> [0mcrates\glaspen-windows\src\overlay/wndproc.rs:228:17
+    [1m[96m|[0m
+[1m[96m179[0m [1m[96m|[0m                 17 => clear_screen(state),
+    [1m[96m|[0m                 [1m[96m--[0m [1m[96mmatches all the relevant values[0m
+[1m[96m...[0m
+[1m[96m228[0m [1m[96m|[0m                 17 => {
+    [1m[96m|[0m                 [1m[93m^^[0m [1m[93mno value can reach this[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(unreachable_patterns)]` (part of `#[warn(unused)]`) on by default
+
+[1m[93mwarning[0m[1m[97m: variable does not need to be mutable[0m
+   [1m[96m--> [0mcrates\glaspen-windows\src\overlay/hud.rs:125:13
+    [1m[96m|[0m
+[1m[96m125[0m [1m[96m|[0m         let mut input = GdiplusStartupInput {
+    [1m[96m|[0m             [1m[96m----[0m[1m[93m^^^^^[0m
+    [1m[96m|[0m             [1m[96m|[0m
+    [1m[96m|[0m             [1m[96mhelp: remove this `mut`[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+[1m[93mwarning[0m[1m[97m: variable does not need to be mutable[0m
+   [1m[96m--> [0mcrates\glaspen-windows\src\overlay/hud.rs:466:9
+    [1m[96m|[0m
+[1m[96m466[0m [1m[96m|[0m     let mut wide: Vec<u16> = text.encode_utf16().collect();
+    [1m[96m|[0m         [1m[96m----[0m[1m[93m^^^^[0m
+    [1m[96m|[0m         [1m[96m|[0m
+    [1m[96m|[0m         [1m[96mhelp: remove this `mut`[0m
+
+[1m[93mwarning[0m[1m[97m: variable does not need to be mutable[0m
+   [1m[96m--> [0mcrates\glaspen-windows\src\overlay/hud.rs:469:9
+    [1m[96m|[0m
+[1m[96m469[0m [1m[96m|[0m     let mut layout = RectF {
+    [1m[96m|[0m         [1m[96m----[0m[1m[93m^^^^^^[0m
+    [1m[96m|[0m         [1m[96m|[0m
+    [1m[96m|[0m         [1m[96mhelp: remove this `mut`[0m
+
+[1m[93mwarning[0m[1m[97m: variable does not need to be mutable[0m
+   [1m[96m--> [0mcrates\glaspen-windows\src\overlay/hud.rs:549:9
+    [1m[96m|[0m
+[1m[96m549[0m [1m[96m|[0m     let mut bmi = BITMAPINFO {
+    [1m[96m|[0m         [1m[96m----[0m[1m[93m^^^[0m
+    [1m[96m|[0m         [1m[96m|[0m
+    [1m[96m|[0m         [1m[96mhelp: remove this `mut`[0m
+
+[1m[93mwarning[0m[1m[97m: methods `fill_dot` and `fill_rect` are never used[0m
+   [1m[96m--> [0mcrates\glaspen-windows\src\overlay/canvas.rs:171:8
+    [1m[96m|[0m
+[1m[96m 21[0m [1m[96m|[0m impl OverlayCanvas {
+    [1m[96m|[0m [1m[96m------------------[0m [1m[96mmethods in this implementation[0m
+[1m[96m...[0m
+[1m[96m171[0m [1m[96m|[0m     fn fill_dot(&mut self, cx: f32, cy: f32, r: f32) -> RECT {
+    [1m[96m|[0m        [1m[93m^^^^^^^^[0m
+[1m[96m...[0m
+[1m[96m188[0m [1m[96m|[0m     fn fill_rect(&mut self, x: f32, y: f32, w: f32, h: f32, color: (u8, u8, u8)) {
+    [1m[96m|[0m        [1m[93m^^^^^^^^^[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+[1m[93mwarning[0m[1m[97m: fields `token` and `delete_font` are never read[0m
+  [1m[96m--> [0mcrates\glaspen-windows\src\overlay/hud.rs:63:5
+   [1m[96m|[0m
+[1m[96m61[0m [1m[96m|[0m struct Gdiplus {
+   [1m[96m|[0m        [1m[96m-------[0m [1m[96mfields in this struct[0m
+[1m[96m62[0m [1m[96m|[0m     _lib: Library,
+[1m[96m63[0m [1m[96m|[0m     token: usize,
+   [1m[96m|[0m     [1m[93m^^^^^[0m
+[1m[96m...[0m
+[1m[96m79[0m [1m[96m|[0m     delete_font: unsafe extern "C" fn(*mut std::ffi::c_void) -> i32,
+   [1m[96m|[0m     [1m[93m^^^^^^^^^^^[0m
+
+[1m[93mwarning[0m[1m[97m: calls to `std::mem::forget` with a value that implements `Copy` does nothing[0m
+  [1m[96m--> [0mcrates\glaspen-windows\src\lib.rs:60:13
+   [1m[96m|[0m
+[1m[96m60[0m [1m[96m|[0m             std::mem::forget(mutex);
+   [1m[96m|[0m             [1m[93m^^^^^^^^^^^^^^^^^[0m[1m[96m-----[0m[1m[93m^[0m
+   [1m[96m|[0m                              [1m[96m|[0m
+   [1m[96m|[0m                              [1m[96margument has type `windows::Win32::Foundation::HANDLE`[0m
+   [1m[96m|[0m
+   [1m[96m= [0m[1m[97mnote[0m: `#[warn(forgetting_copy_types)]` on by default
+[1m[96mhelp[0m: use `let _ = ...` to ignore the expression or result
+   [1m[96m|[0m
+[1m[96m60[0m [91m- [0m            [91mstd::mem::forget([0mmutex[91m)[0m;
+[1m[96m60[0m [92m+ [0m            [92mlet _ = [0mmutex;
+   [1m[96m|[0m
+
+[1m[93mwarning[0m[1m[97m: variable `GAP` should have a snake case name[0m
+   [1m[96m--> [0mcrates\glaspen-windows\src\overlay/canvas.rs:328:13
+    [1m[96m|[0m
+[1m[96m328[0m [1m[96m|[0m         let GAP: f64 = grid_size();
+    [1m[96m|[0m             [1m[93m^^^[0m [1m[93mhelp: convert the identifier to snake case: `gap`[0m
+    [1m[96m|[0m
+    [1m[96m= [0m[1m[97mnote[0m: `#[warn(non_snake_case)]` (part of `#[warn(nonstandard_style)]`) on by default
+
+[1m[93mwarning[0m: `glaspen-windows` (lib) generated 9 warnings (run `cargo fix --lib -p glaspen-windows` to apply 4 suggestions)
+[1m[93mwarning[0m: `glaspen-core` (lib) generated 3 warnings
+[1m[93mwarning[0m[1m[97m: unused dependency `cc`[0m
+  [1m[96m--> [0mCargo.toml:33:1
+   [1m[96m|[0m
+[1m[96m33[0m [1m[96m|[0m cc = "1"
+   [1m[96m|[0m [1m[93m^^^^^^^^[0m
+   [1m[96m|[0m
+   [1m[96m= [0m[1m[97mnote[0m: `cargo::unused_dependencies` is set to `warn` by default
+[1m[96mhelp[0m: consider removing the dependency on `cc`
+[1m[93mwarning[0m: `glaspen2` (manifest) generated 1 warning
+[1m[92m    Finished[0m `release` profile [optimized] target(s) in 6m 47s
