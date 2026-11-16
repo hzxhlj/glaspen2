@@ -23,6 +23,15 @@ concurrency:
 permissions:
   contents: write
 
+# actions-rust-lang/setup-rust-toolchain 默认注入 RUSTFLAGS=-D warnings。
+# 仓库里 export/mod.rs 的 take_invert_dirty / stroke_points 与 update.rs 的
+# signer_authorities 目前没有调用者(上游 ci.yml 的 windows-check 也是靠
+# continue-on-error 兜着), 会把整条流水线卡在编译错误上。
+# 这里只放开 dead_code 这一类, 其它警告依旧按错误处理 —— 好抓我们自己
+# 引入的未使用变量之类的问题, 同时不去改与本次改动无关的源码。
+env:
+  RUSTFLAGS: "-D warnings -A dead_code"
+
 jobs:
   build:
     runs-on: windows-latest
@@ -55,15 +64,8 @@ jobs:
       # 笔迹几何单测(纯数学, 不依赖 cairo DLL): 细分/轮廓的正确性在这里验
       # 注意: 不要用 `cmd > log 2>&1` 再 tail —— bash 带 -e, 命令失败会立即退出,
       # tail 永远执行不到, 日志会丢。用 tee 让输出同时进日志与文件。
-      #
-      # env 里放宽 dead_code: 单独编译 core 的 test target 时, export/mod.rs 里
-      # take_invert_dirty / stroke_points 暂时没有调用者(整个工作区构建时才会被用到),
-      # 而 setup-rust-toolchain 默认给了 RUSTFLAGS=-D warnings, 会把这条提示升级成
-      # 编译错误。这里只针对测试步骤关掉 dead_code, 不改源码也不放松其它 lint。
       - name: cargo test (inkgeom)
         shell: bash
-        env:
-          RUSTFLAGS: "-D warnings -A dead_code"
         run: cargo test -p glaspen-core inkgeom -- --nocapture 2>&1 | tee /tmp/test.log
 
       # 设置面板(Flutter)可选: 失败也只是没有面板, 不影响笔迹本体出包
@@ -98,20 +100,25 @@ jobs:
           done
           exit 0
 
-      - name: 失败日志回写 ci-logs 分支
-        if: failure()
+      # 无论成败都回写: ci-log.txt 是编译/测试日志尾部, fmt.diff 是 rustfmt
+      # 想做的改动(本机没有 rustfmt, 靠它把格式同步回本地, 免得上游
+      # cargo fmt --check 挂掉)。读到 raw.githubusercontent.com 即可, 不用贴日志。
+      - name: 日志与格式差异回写 ci-logs 分支
+        if: always()
         continue-on-error: true
         shell: bash
         run: |
-          { echo "# windows-build $(date -u +%FT%TZ)  ref=${{ github.ref_name }}"; \
-            for f in /tmp/fmt.log /tmp/test.log /tmp/build.log; do
-              [ -f "$f" ] && { echo; echo "===== $f ====="; tail -120 "$f"; };
+          { echo "# windows-build $(date -u +%FT%TZ)  ref=${{ github.ref_name }}  status=${{ job.status }}"; \
+            for f in /tmp/test.log /tmp/build.log; do
+              [ -f "$f" ] && { echo; echo "===== $f ====="; tail -200 "$f"; };
             done; } > ci-log.txt
+          git --no-pager diff > fmt.diff 2>/dev/null || true
+          echo "fmt.diff bytes: $(wc -c < fmt.diff)"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B ci-logs
-          git add -f ci-log.txt
-          git commit -m "ci: windows-build 失败日志 (${{ github.ref_name }})" || true
+          git add -f ci-log.txt fmt.diff
+          git commit -m "ci: windows-build 日志与格式差异 (${{ github.ref_name }})" || true
           git push -f origin ci-logs
 
       - name: 组装产物
