@@ -9,7 +9,9 @@ pub fn run() {
 
         let hwnd = create_overlay_window();
 
-        let mut pen_r = 1.0;
+        // 默认黑笔(色板最后一项就是纯黑, 会经 closest_color_index 吸附到它)。
+        // 存档里已有颜色时以存档为准 —— 想长期用黑笔, 在设置面板选一次黑色即可。
+        let mut pen_r = 0.0;
         let mut pen_g = 0.0;
         let mut pen_b = 0.0;
         let mut width_scale = 0.3;
@@ -228,6 +230,7 @@ pub fn run() {
         RegisterHotKey(Some(hwnd), 14, mods, VK_PRIOR.0 as u32).ok(); // PageUp
         RegisterHotKey(Some(hwnd), 15, mods, VK_NEXT.0 as u32).ok(); // PageDown
         RegisterHotKey(Some(hwnd), 16, mods, 'R' as u32).ok(); // 按住录 GIF
+        RegisterHotKey(Some(hwnd), 17, mods, 'E' as u32).ok(); // E 清屏(等同 C)
         RegisterHotKey(Some(hwnd), 17, mods, '2' as u32).ok(); // 按住手写草稿(集成开)
         RegisterHotKey(Some(hwnd), 18, mods, '3' as u32).ok(); // 按住手写消息直发(集成开)
         RegisterHotKey(Some(hwnd), 19, mods, 'D' as u32).ok(); // 打开设置面板
