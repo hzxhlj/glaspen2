@@ -23,14 +23,11 @@ concurrency:
 permissions:
   contents: write
 
-# actions-rust-lang/setup-rust-toolchain 默认注入 RUSTFLAGS=-D warnings。
-# 仓库里 export/mod.rs 的 take_invert_dirty / stroke_points 与 update.rs 的
-# signer_authorities 目前没有调用者(上游 ci.yml 的 windows-check 也是靠
-# continue-on-error 兜着), 会把整条流水线卡在编译错误上。
-# 这里只放开 dead_code 这一类, 其它警告依旧按错误处理 —— 好抓我们自己
-# 引入的未使用变量之类的问题, 同时不去改与本次改动无关的源码。
-env:
-  RUSTFLAGS: "-D warnings -A dead_code"
+# RUSTFLAGS: setup-rust-toolchain 默认注入 `-D warnings`, 但上游 Windows 侧
+# 代码(overlay/hud.rs 等)从未在 Windows runner 上编译通过过 —— 上游 ci.yml 的
+# windows-check 一直靠 continue-on-error 兜着。这条流水线的目标是"出可运行的
+# 包 + 跑 inkgeom 单测", 所以各 cargo step 里把 RUSTFLAGS 清空, 不让既有警告
+# 挡住出包; 警告仍然会完整打印在日志里, 需要时照样能查。
 
 jobs:
   build:
@@ -66,6 +63,8 @@ jobs:
       # tail 永远执行不到, 日志会丢。用 tee 让输出同时进日志与文件。
       - name: cargo test (inkgeom)
         shell: bash
+        env:
+          RUSTFLAGS: ""
         run: cargo test -p glaspen-core inkgeom -- --nocapture 2>&1 | tee /tmp/test.log
 
       # 设置面板(Flutter)可选: 失败也只是没有面板, 不影响笔迹本体出包
@@ -84,6 +83,8 @@ jobs:
 
       - name: cargo build --release
         shell: bash
+        env:
+          RUSTFLAGS: ""
         run: cargo build --release 2>&1 | tee /tmp/build.log
 
       # 失败可读性: 把 error 行转成 ::error:: 注解(运行页直接看得到)

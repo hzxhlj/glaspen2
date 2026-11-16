@@ -44,8 +44,12 @@ fn fill_stroke_path(
     if shadow {
         const STEPS: [(f64, f64); 3] = [(1.5, 0.20), (3.0, 0.13), (5.0, 0.07)];
         for (spread, sa) in STEPS {
-            let rect = canvas.stroke_shadow_pass(path, spread, sa);
-            merge_rect(&mut dirty, &rect);
+            // stroke_shadow_pass 在没有 cairo(回退自绘)时返回 None, 必须解包:
+            // 上游这里直接取 &Option<RECT>, glaspen-windows 因此在 Windows 上
+            // 从未真正编译通过(ci.yml 的 windows-check 一直靠 continue-on-error 兜)。
+            if let Some(rect) = canvas.stroke_shadow_pass(path, spread, sa) {
+                merge_rect(&mut dirty, &rect);
+            }
         }
     }
 
