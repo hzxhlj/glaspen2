@@ -44,15 +44,15 @@ use glaspen_core::cairo_dl::CairoRenderer;
 
 // ── 文件拆分(纯文本 include, 编译期等价于原单文件; 无 Windows 编译环境,
 //    用 include! 保证拆分零语义变化; 错误行号仍指向真实子文件)──
-include!("overlay/hid.rs");
-include!("overlay/cmds.rs");
-include!("overlay/state.rs");
-include!("overlay/canvas.rs");
-include!("overlay/pen.rs");
-include!("overlay/hid_raw.rs");
-include!("overlay/wndproc.rs");
-include!("overlay/run.rs");
-include!("overlay/mouse.rs");
-include!("overlay/hud.rs");
-include!("overlay/actions.rs");
-include!("overlay/pipe.rs");
+include!("hid.rs");
+include!("cmds.rs");
+include!("state.rs");
+include!("canvas.rs");
+include!("pen.rs");
+include!("hid_raw.rs");
+include!("wndproc.rs");
+include!("run.rs");
+include!("mouse.rs");
+include!("hud.rs");
+include!("actions.rs");
+include!("pipe.rs");
