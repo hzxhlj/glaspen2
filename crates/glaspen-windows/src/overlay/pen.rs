@@ -74,15 +74,6 @@ fn fill_stroke_path(
         let rect = canvas.fill_outline(&outline);
         merge_rect(&mut dirty, &rect);
     }
-    // 端点圆点保留(与轮廓笔帽同色重叠): 轮廓退化时仍有圆头, 双保险
-    if let Some(&(cx, cy, r)) = path.first() {
-        let rect = canvas.fill_dot(cx, cy, r);
-        merge_rect(&mut dirty, &rect);
-    }
-    if let Some(&(cx, cy, r)) = path.last() {
-        let rect = canvas.fill_dot(cx, cy, r);
-        merge_rect(&mut dirty, &rect);
-    }
     dirty
 }
 
@@ -90,10 +81,8 @@ fn fill_stroke_path(
 fn redraw_pen(state: &mut OverlayState, new_pts: &[(f32, f32, f32)]) -> Option<RECT> {
     let ol = if state.draw.outline_enabled { 1.0 } else { 0.0 };
 
-    if state.pen_path.is_empty() && !new_pts.is_empty() {
-        let (cx, cy, r) = new_pts[0];
-        let _ = state.canvas.fill_dot(cx, cy, r);
-    }
+    // 落笔瞬间不再单独画圆点: 轮廓自带半圆笔帽, 那个额外的圆点就是写字时
+    // 笔尖处一闪而过的小圆圈。第一份报告(1 点)不画, 8ms 后第二点到达即有笔迹。
     let new_start = state.pen_path.len();
     state.pen_path.extend_from_slice(new_pts);
     let new_end = state.pen_path.len();

@@ -141,7 +141,8 @@ unsafe extern "system" fn wnd_proc(
                 set_input_blocking(hwnd, true);
                 // 书写期间鼠标被本窗口接管, 光标换成小圆点(不挡视线);
                 // 抬笔恢复穿透后, 光标归属又交回下层窗口, 无需手动还原。
-                let _ = windows::Win32::UI::WindowsAndMessaging::SetCursor(dot_cursor());
+                let _ =
+                    windows::Win32::UI::WindowsAndMessaging::SetCursor(Some(dot_cursor()));
             }
             let _ = SetTimer(Some(hwnd), TIMER_UNBLOCK, UNBLOCK_DELAY_MS, None);
             LRESULT(0)

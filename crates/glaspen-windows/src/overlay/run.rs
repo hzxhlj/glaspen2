@@ -9,12 +9,12 @@ pub fn run() {
 
         let hwnd = create_overlay_window();
 
-        // 默认黑笔(色板最后一项就是纯黑, 会经 closest_color_index 吸附到它)。
-        // 存档里已有颜色时以存档为准 —— 想长期用黑笔, 在设置面板选一次黑色即可。
+        // 默认黑笔 + 稍粗一档(0.6): 原来红笔 + 0.3 细档写出来像一根粗细
+        // 不变的细线, 与 OneNote 的手写观感差得最远。存档有值时以存档为准。
         let mut pen_r = 0.0;
         let mut pen_g = 0.0;
         let mut pen_b = 0.0;
-        let mut width_scale = 0.3;
+        let mut width_scale = 0.6;
         glaspen_core::export::glaspen2_load_settings_parts(
             &mut pen_r,
             &mut pen_g,
