@@ -1,0 +1,153 @@
+name: windows-build
+
+# 云端出产物: 本机没有 Windows 上的 Rust/Flutter 工具链时, 用这条流水线编译
+# 并下载可直接运行的 Windows 包(exe + dll + 自带 cairo)。
+#
+# 触发: 任何分支的 push(便于在 fork 上验证改动), 或手动 Run workflow。
+# fork 首次使用需在 Actions 页点一次
+# "I understand my workflows, go ahead and enable them"。
+#
+# 失败时把日志尾部推到 ci-logs 分支: 匿名也能读到
+# https://raw.githubusercontent.com/<owner>/glaspen2/ci-logs/ci-log.txt
+# —— 不用贴日志也能远程定位。
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+concurrency:
+  group: winbuild-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+# RUSTFLAGS: setup-rust-toolchain 默认注入 `-D warnings`, 但上游 Windows 侧
+# 代码(overlay/hud.rs 等)从未在 Windows runner 上编译通过过 —— 上游 ci.yml 的
+# windows-check 一直靠 continue-on-error 兜着。这条流水线的目标是"出可运行的
+# 包 + 跑 inkgeom 单测", 所以各 cargo step 里把 RUSTFLAGS 清空, 不让既有警告
+# 挡住出包; 警告仍然会完整打印在日志里, 需要时照样能查。
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy, rustfmt
+
+      # chat/build.rs 用 tonic_build::compile_protos, 需要 protoc
+      - name: Ensure protoc
+        shell: pwsh
+        run: |
+          if (-not (Get-Command protoc -ErrorAction SilentlyContinue)) {
+            choco install protoc -y --no-progress
+            "$env:CHOCOLATEYINSTALL\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          }
+          protoc --version
+
+      # 格式化检查只做提示: 失败不影响出包, 日志里能拿到 rustfmt 的 diff 用来回灌
+      - name: rustfmt (仅提示)
+        continue-on-error: true
+        shell: bash
+        run: |
+          cargo fmt
+          { echo "--- rustfmt 改动 ---"; git --no-pager diff --stat; git --no-pager diff; } | tee /tmp/fmt.log
+
+      # 笔迹几何单测(纯数学, 不依赖 cairo DLL): 细分/轮廓的正确性在这里验
+      # 注意: 不要用 `cmd > log 2>&1` 再 tail —— bash 带 -e, 命令失败会立即退出,
+      # tail 永远执行不到, 日志会丢。用 tee 让输出同时进日志与文件。
+      - name: cargo test (inkgeom)
+        shell: bash
+        env:
+          RUSTFLAGS: ""
+        run: cargo test -p glaspen-core inkgeom -- --nocapture 2>&1 | tee /tmp/test.log
+
+      # 设置面板(Flutter)可选: 失败也只是没有面板, 不影响笔迹本体出包
+      - name: Setup Flutter (optional)
+        continue-on-error: true
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.41.0
+          channel: stable
+          cache: true
+
+      - name: flutter build windows (optional)
+        continue-on-error: true
+        working-directory: flutter_settings
+        run: flutter build windows --release
+
+      - name: cargo build --release
+        shell: bash
+        env:
+          RUSTFLAGS: ""
+        run: cargo build --release 2>&1 | tee /tmp/build.log
+
+      # 失败可读性: 把 error 行转成 ::error:: 注解(运行页直接看得到)
+      - name: 失败注解
+        if: failure()
+        shell: bash
+        run: |
+          for f in /tmp/build.log /tmp/test.log; do
+            [ -f "$f" ] || continue
+            echo "=== $f ==="
+            grep -E -A6 "^error(\[|:)" "$f" | head -80 | while IFS= read -r line; do
+              echo "::error::${line:0:300}"
+            done
+          done
+          exit 0
+
+      # 无论成败都回写: ci-log.txt 是编译/测试日志尾部, fmt.diff 是 rustfmt
+      # 想做的改动(本机没有 rustfmt, 靠它把格式同步回本地, 免得上游
+      # cargo fmt --check 挂掉)。读到 raw.githubusercontent.com 即可, 不用贴日志。
+      - name: 日志与格式差异回写 ci-logs 分支
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          { echo "# windows-build $(date -u +%FT%TZ)  ref=${{ github.ref_name }}  status=${{ job.status }}"; \
+            for f in /tmp/test.log /tmp/build.log; do
+              [ -f "$f" ] && { echo; echo "===== $f ====="; tail -200 "$f"; };
+            done; } > ci-log.txt
+          git --no-pager diff > fmt.diff 2>/dev/null || true
+          echo "fmt.diff bytes: $(wc -c < fmt.diff)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B ci-logs
+          git add -f ci-log.txt fmt.diff
+          git commit -m "ci: windows-build 日志与格式差异 (${{ github.ref_name }})" || true
+          git push -f origin ci-logs
+
+      - name: 组装产物
+        if: success()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item target/release/glaspen2.exe dist/
+          if (Test-Path target/release/glaspen2.dll) { Copy-Item target/release/glaspen2.dll dist/ }
+          # build.rs 已把 vendor/win/cairo 的 DLL 拷到 target/release, 一并收走
+          Get-ChildItem target/release/*.dll |
+            Where-Object { $_.Name -ne 'glaspen2.dll' } |
+            Copy-Item -Destination dist/ -ErrorAction SilentlyContinue
+          $flutter = "flutter_settings/build/windows/x64/runner/Release"
+          if (Test-Path "$flutter/glaspen2_settings.exe") {
+            Copy-Item "$flutter/glaspen2_settings.exe" dist/
+            Copy-Item "$flutter/flutter_windows.dll" dist/ -ErrorAction SilentlyContinue
+            if (Test-Path "$flutter/data") { Copy-Item "$flutter/data" -Destination dist/data -Recurse }
+            "flutter settings: 已打包"
+          } else {
+            "flutter settings: 未构建(仅没有设置面板, 笔迹功能不受影响)"
+          }
+          Copy-Item README.md, LICENSE dist/ -ErrorAction SilentlyContinue
+          Get-ChildItem dist | Select-Object Name, Length
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: glaspen2-windows-x64
+          path: dist/**
+          if-no-files-found: error

@@ -1,3 +1,53 @@
+/// 书写光标: 16×16 小圆点(黑心 + 白环)。单色光标用 AND/XOR 双掩码拼,
+/// 不依赖位图资源: AND=1 保留屏幕像素; AND=0 时由 XOR 决定画黑(0)还是白(1)。
+/// 白环保证深色/浅色背景上都看得见。首次调用建一次, 之后走缓存。
+fn dot_cursor() -> windows::Win32::UI::WindowsAndMessaging::HCURSOR {
+    use std::sync::atomic::{AtomicIsize, Ordering};
+    use windows::Win32::UI::WindowsAndMessaging::{CreateCursor, HCURSOR};
+
+    static CACHE: AtomicIsize = AtomicIsize::new(0);
+    let cached = CACHE.load(Ordering::SeqCst);
+    if cached != 0 {
+        return HCURSOR(cached as *mut core::ffi::c_void);
+    }
+
+    const W: usize = 16;
+    const H: usize = 16;
+    const STRIDE: usize = W / 8;
+    let mut and_mask = [0xFFu8; STRIDE * H]; // 默认全保留(不遮挡屏幕)
+    let mut xor_mask = [0x00u8; STRIDE * H];
+    for y in 0..H {
+        for x in 0..W {
+            let dx = x as f32 + 0.5 - (W as f32) * 0.5;
+            let dy = y as f32 + 0.5 - (H as f32) * 0.5;
+            let d = (dx * dx + dy * dy).sqrt();
+            let byte = y * STRIDE + x / 8;
+            let bit = 0x80u8 >> (x % 8);
+            if d <= 3.5 {
+                and_mask[byte] &= !bit; // 圆心: 清掉屏幕像素后不置位 = 纯黑
+            } else if d <= 5.0 {
+                and_mask[byte] &= !bit; // 白环
+                xor_mask[byte] |= bit;
+            }
+        }
+    }
+
+    let h = unsafe {
+        CreateCursor(
+            None,
+            (W / 2) as i32,
+            (H / 2) as i32,
+            W as i32,
+            H as i32,
+            and_mask.as_ptr() as *const core::ffi::c_void,
+            xor_mask.as_ptr() as *const core::ffi::c_void,
+        )
+    }
+    .unwrap_or_default();
+    CACHE.store(h.0 as isize, Ordering::SeqCst);
+    h
+}
+
 unsafe extern "system" fn wnd_proc(
     hwnd: HWND,
     msg: u32,
@@ -63,6 +113,8 @@ unsafe extern "system" fn wnd_proc(
             }
             // 笔报告到达 = 笔在范围内:拦截输入(清除 WS_EX_TRANSPARENT),重置离开计时
             set_input_blocking(hwnd, true);
+            // 拦截期间鼠标归本窗口, 光标换成小圆点, 免得箭头盖住笔尖
+            let _ = windows::Win32::UI::WindowsAndMessaging::SetCursor(dot_cursor());
             let _ = KillTimer(Some(hwnd), TIMER_UNBLOCK);
             let _ = KillTimer(Some(hwnd), TIMER_PEEK);
 
@@ -106,6 +158,8 @@ unsafe extern "system" fn wnd_proc(
             match wparam.0 as i32 {
                 // Ctrl+Alt+C 新建画布 / Ctrl+Alt+V 开关涂鸦 / Ctrl+Alt+Z 撤销
                 1 => clear_screen(state),
+                // Ctrl+Alt+E 同 Ctrl+Alt+C: 清屏(新建空白画布)
+                17 => clear_screen(state),
                 2 => toggle_enabled(state),
                 3 => undo_last_stroke(state),
                 // Ctrl+Alt+J/K 上一页/下一页

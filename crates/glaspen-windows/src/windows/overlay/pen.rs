@@ -1,38 +1,20 @@
 fn width_r(p: f32, scale: f32) -> f32 {
-    (0.75 + p.clamp(0.0, 1.0) * 1.75) * scale.max(0.05)
+    // 压力 → 半径。原来的线性式 (0.75 + p*1.75) 跨度只有 3.3 倍, 细档
+    // (scale=0.3) 下直径 0.45~1.5px, 写出来像一根粗细不变的细线 —— 与
+    // OneNote 那种"轻压出锋、重压明显变粗"的观感差得最远的就是这里。
+    // 改成二次曲线: 轻压更细(0.9), 重压更粗(3.5), 跨度约 4 倍, 中段也比
+    // 原来粗, 抬笔/行笔不再糊成等宽。
+    let p = p.clamp(0.0, 1.0);
+    (0.9 + 2.6 * p * p) * scale.max(0.05)
 }
 
 /// 由中心线点列(x, y, 半径)构建可变宽度轮廓:
-/// 每点沿法线 ±偏移半径,返回闭合轮廓点列(左边界正向 + 右边界反向)。
-/// 法线用中点差分(前后点方向),保证相邻带在共享点处偏移一致,无缝衔接。
+/// 先按 centripetal Catmull-Rom 把采样点细分到 ~1.5px 步长, 再沿法线 ±偏移
+/// 半径(见 core::inkgeom)。细分是关键 —— 模型器按 120Hz 时间采样, 笔速快时
+/// 相邻点十几像素一段, 直接连折线会把圆弧画成肉眼可见的折角。
+/// 轮廓两端自带真半圆笔帽, 所以调用方不必再补端点圆点。
 fn build_outline(pts: &[(f32, f32, f32)]) -> Vec<(f32, f32)> {
-    let n = pts.len();
-    if n < 2 {
-        return vec![];
-    }
-    let mut left = Vec::with_capacity(n);
-    let mut right = Vec::with_capacity(n);
-    for i in 0..n {
-        let (x, y, r) = pts[i];
-        let (dx, dy) = if i == 0 {
-            (pts[1].0 - x, pts[1].1 - y)
-        } else if i == n - 1 {
-            (x - pts[i - 1].0, y - pts[i - 1].1)
-        } else {
-            (pts[i + 1].0 - pts[i - 1].0, pts[i + 1].1 - pts[i - 1].1)
-        };
-        let l = (dx * dx + dy * dy).sqrt();
-        let (nx, ny) = if l > 1e-6 {
-            (-dy / l, dx / l)
-        } else {
-            (1.0, 0.0)
-        };
-        left.push((x + nx * r, y + ny * r));
-        right.push((x - nx * r, y - ny * r));
-    }
-    let mut outline = left;
-    outline.extend(right.iter().rev());
-    outline
+    glaspen_core::inkgeom::densified_outline(pts, glaspen_core::inkgeom::DENSIFY_STEP)
 }
 
 /// 合并脏矩形
@@ -76,29 +58,15 @@ fn fill_stroke_path(canvas: &mut OverlayCanvas, path: &[(f32, f32, f32)], ol: f3
             let rect = canvas.fill_outline(&outline);
             merge_rect(&mut dirty, &rect);
         }
-        if let Some(&(cx, cy, r)) = path.first() {
-            let rect = canvas.fill_dot(cx, cy, r + ol);
-            merge_rect(&mut dirty, &rect);
-        }
-        if let Some(&(cx, cy, r)) = path.last() {
-            let rect = canvas.fill_dot(cx, cy, r + ol);
-            merge_rect(&mut dirty, &rect);
-        }
         canvas.color = saved;
     }
 
-    // 主体
+    // 主体。轮廓两端已带半圆笔帽, 不再补端点圆点 —— 那些圆点(描边开启时还是
+    // r+ol, 比笔迹粗一圈)会在起笔/落笔处留下一个明显的"圈", 也就是写字时
+    // 那个多余的圈圈特效。
     let outline = build_outline(path);
     if outline.len() >= 3 {
         let rect = canvas.fill_outline(&outline);
-        merge_rect(&mut dirty, &rect);
-    }
-    if let Some(&(cx, cy, r)) = path.first() {
-        let rect = canvas.fill_dot(cx, cy, r);
-        merge_rect(&mut dirty, &rect);
-    }
-    if let Some(&(cx, cy, r)) = path.last() {
-        let rect = canvas.fill_dot(cx, cy, r);
         merge_rect(&mut dirty, &rect);
     }
     dirty

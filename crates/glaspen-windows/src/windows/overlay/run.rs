@@ -9,10 +9,12 @@ pub fn run() {
 
         let hwnd = create_overlay_window();
 
-        let mut pen_r = 1.0;
+        // 默认黑笔 + 稍粗一档(0.6): 原来的红笔 + 0.3 细档写出来像一根
+        // 不变的细线, 和 OneNote 的手写观感差得最远。存档里有值时以存档为准。
+        let mut pen_r = 0.0;
         let mut pen_g = 0.0;
         let mut pen_b = 0.0;
-        let mut width_scale = 0.3;
+        let mut width_scale = 0.6;
         glaspen_core::export::glaspen2_load_settings_parts(
             &mut pen_r,
             &mut pen_g,
@@ -166,6 +168,7 @@ pub fn run() {
         RegisterHotKey(Some(hwnd), 14, mods, VK_PRIOR.0 as u32).ok(); // PageUp
         RegisterHotKey(Some(hwnd), 15, mods, VK_NEXT.0 as u32).ok(); // PageDown
         RegisterHotKey(Some(hwnd), 16, mods, 'R' as u32).ok(); // 按住录 GIF
+        RegisterHotKey(Some(hwnd), 17, mods, 'E' as u32).ok(); // E 清屏(同 C)
 
         let _ = ShowWindow(hwnd, SW_SHOWNOACTIVATE);
         let _ = UpdateWindow(hwnd);
