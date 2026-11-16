@@ -53,13 +53,11 @@ jobs:
           { echo "--- rustfmt 改动 ---"; git --no-pager diff --stat; git --no-pager diff; } | tee /tmp/fmt.log
 
       # 笔迹几何单测(纯数学, 不依赖 cairo DLL): 细分/轮廓的正确性在这里验
+      # 注意: 不要用 `cmd > log 2>&1` 再 tail —— bash 带 -e, 命令失败会立即退出,
+      # tail 永远执行不到, 日志会丢。用 tee 让输出同时进日志与文件。
       - name: cargo test (inkgeom)
         shell: bash
-        run: |
-          cargo test -p glaspen-core inkgeom:: -- --nocapture > /tmp/test.log 2>&1
-          rc=$?
-          tail -40 /tmp/test.log
-          exit $rc
+        run: cargo test -p glaspen-core inkgeom -- --nocapture 2>&1 | tee /tmp/test.log
 
       # 设置面板(Flutter)可选: 失败也只是没有面板, 不影响笔迹本体出包
       - name: Setup Flutter (optional)
@@ -77,11 +75,7 @@ jobs:
 
       - name: cargo build --release
         shell: bash
-        run: |
-          cargo build --release > /tmp/build.log 2>&1
-          rc=$?
-          tail -60 /tmp/build.log
-          exit $rc
+        run: cargo build --release 2>&1 | tee /tmp/build.log
 
       # 失败可读性: 把 error 行转成 ::error:: 注解(运行页直接看得到)
       - name: 失败注解
