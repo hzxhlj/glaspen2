@@ -32,8 +32,16 @@
   真半圆笔帽(以前靠端点圆点补, 细笔末端偏方)。超长涂鸦按点数上限自动放大步长,
   填充开销有界。实时覆盖层(Windows)与静态渲染(面板缩略图 / PDF / GIF)共用同一
   套几何, 屏幕上看到的与导出的一致。
-- **笔/鼠标分离逻辑未动**: 本次只改"已知点列怎么画成线", 原始 HID 路由、
-  悬停不挡鼠标、落笔才拦输入这些行为一行未改。
+- **笔/鼠标分离(修复回归)**: "悬停不挡鼠标"的改法把恢复穿透的计时器放进了
+  `if in_stroke` 分支 —— 而每份 HID 报告开头都会 `KillTimer(TIMER_UNBLOCK)`。
+  抬笔那份报告的顺序是: 先杀掉上一份设的计时器 → `handle_point(up)` 把
+  `in_stroke` 置 false → 走到判断时已是 false, 于是不再重设计时器。结果
+  `WS_EX_TRANSPARENT` 再也加不回去, 全屏覆盖层吃掉所有鼠标事件: 写下一笔
+  再抬笔之后, 鼠标就点不到下层任何窗口。现在计时器无条件续期, 拦截与否仍
+  只看 `in_stroke` —— 悬停不挡、落笔才拦、抬笔 50ms 后恢复穿透, 三者都保住。
+- **Windows 侧首次可编译**: `pen.rs` 的软阴影 pass 返回 `Option<RECT>`, 原先
+  直接按 `&RECT` 传入(`merge_rect`), `glaspen-windows` 因此从未在 Windows 上
+  编译通过(上游 CI 的 `windows-check` 一直靠 `continue-on-error` 兜着)。
 
 ### macOS
 

@@ -77,11 +77,20 @@ unsafe extern "system" fn wnd_proc(
             // 只有**落笔**才拦截鼠标(清 WS_EX_TRANSPARENT),抬笔 50ms 后恢复。
             // 以前每份 HID 报告都拦截: 笔搁在板上(悬停/在范围内)时鼠标
             // 完全点不了下层应用, 直接破坏"键鼠/笔分离"的核心卖点。
-            let state = &mut *STATE.load(Ordering::SeqCst);
+            //
+            // 注意 timer 必须**无条件**续期, 不能跟着 in_stroke 走:
+            // 抬笔那一份报告的处理顺序是
+            //   ① 上面 KillTimer(TIMER_UNBLOCK) 先杀掉上一份报告设的恢复计时器
+            //   ② process_raw_hid → handle_point(up) 把 in_stroke 置为 false
+            //   ③ 走到这里时 in_stroke 已经是 false → 若此时才决定不设 timer,
+            //      就再也没有 WM_TIMER 去调 set_input_blocking(false),
+            //      WS_EX_TRANSPARENT 永久丢失 → 全屏覆盖层吃掉所有鼠标事件
+            //      (表现为:写下一笔再抬笔,鼠标就再也点不到下层窗口)。
+            // 所以: 拦截与否看 in_stroke, 计时器每份报告都重新上。
             if state.in_stroke {
                 set_input_blocking(hwnd, true);
-                let _ = SetTimer(Some(hwnd), TIMER_UNBLOCK, UNBLOCK_DELAY_MS, None);
             }
+            let _ = SetTimer(Some(hwnd), TIMER_UNBLOCK, UNBLOCK_DELAY_MS, None);
             LRESULT(0)
         }
         WM_TIMER => {
