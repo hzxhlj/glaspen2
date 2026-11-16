@@ -374,14 +374,29 @@ pub fn render_strokes(
             (s.g.clamp(0.0, 1.0) * 255.0).round() as u8,
             (s.b.clamp(0.0, 1.0) * 255.0).round() as u8,
         );
-        for (i, &(x, y, w, _t)) in pts.iter().enumerate() {
-            let (sx, sy) = map(x, y);
-            let sw = w * zoom * lay.scale;
+        // 中心线按同一条 centripetal Catmull-Rom 细分(inkgeom, 与玻璃上的
+        // 实时绘制同一套几何)。步长按输出像素折算 → 缩略图/低缩放时自动变粗,
+        // 不白算。120Hz 采样点直接连折线会把圆弧画成折角、把线宽断成台阶。
+        let output_scale = (zoom * lay.scale).abs().max(1e-6);
+        let step = (2.0 / output_scale).clamp(0.2, 40.0) as f32;
+        let centre: Vec<(f32, f32, f32)> = pts
+            .iter()
+            .map(|&(x, y, w, _t)| (x as f32, y as f32, (w * 0.5) as f32))
+            .collect();
+        let dense = crate::inkgeom::densify(&centre, step);
+        let pts_d: &[(f32, f32, f32)] = if dense.len() >= 2 {
+            &dense[..]
+        } else {
+            &centre[..]
+        };
+        for (i, &(x, y, r)) in pts_d.iter().enumerate() {
+            let (sx, sy) = map(x as f64, y as f64);
+            let sw = r as f64 * 2.0 * zoom * lay.scale;
             if i == 0 {
                 surf.fill_disc(sx, sy, sw * 0.5, rgb, alpha);
             } else {
-                let (px, py, _pw, _pt) = pts[i - 1];
-                let (pxx, pyy) = map(px, py);
+                let (px, py, _) = pts_d[i - 1];
+                let (pxx, pyy) = map(px as f64, py as f64);
                 surf.stroke_seg(pxx, pyy, sx, sy, sw, rgb, alpha, false);
             }
         }
