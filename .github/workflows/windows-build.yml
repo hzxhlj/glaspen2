@@ -55,8 +55,15 @@ jobs:
       # 笔迹几何单测(纯数学, 不依赖 cairo DLL): 细分/轮廓的正确性在这里验
       # 注意: 不要用 `cmd > log 2>&1` 再 tail —— bash 带 -e, 命令失败会立即退出,
       # tail 永远执行不到, 日志会丢。用 tee 让输出同时进日志与文件。
+      #
+      # env 里放宽 dead_code: 单独编译 core 的 test target 时, export/mod.rs 里
+      # take_invert_dirty / stroke_points 暂时没有调用者(整个工作区构建时才会被用到),
+      # 而 setup-rust-toolchain 默认给了 RUSTFLAGS=-D warnings, 会把这条提示升级成
+      # 编译错误。这里只针对测试步骤关掉 dead_code, 不改源码也不放松其它 lint。
       - name: cargo test (inkgeom)
         shell: bash
+        env:
+          RUSTFLAGS: "-D warnings -A dead_code"
         run: cargo test -p glaspen-core inkgeom -- --nocapture 2>&1 | tee /tmp/test.log
 
       # 设置面板(Flutter)可选: 失败也只是没有面板, 不影响笔迹本体出包
