@@ -4,8 +4,12 @@ name: windows-build
 # 并下载可直接运行的 Windows 包(exe + dll + 自带 cairo)。
 #
 # 触发: 任何分支的 push(便于在 fork 上验证改动), 或手动 Run workflow。
-# 注意: fork 首次使用需在 Actions 页点一次
+# fork 首次使用需在 Actions 页点一次
 # "I understand my workflows, go ahead and enable them"。
+#
+# 失败时把日志尾部推到 ci-logs 分支: 匿名也能读到
+# https://raw.githubusercontent.com/<owner>/glaspen2/ci-logs/ci-log.txt
+# —— 不用贴日志也能远程定位。
 
 on:
   push:
@@ -15,6 +19,9 @@ on:
 concurrency:
   group: winbuild-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -43,20 +50,19 @@ jobs:
         shell: bash
         run: |
           cargo fmt
-          echo "--- rustfmt 改动 ---"
-          git --no-pager diff --stat
-          git --no-pager diff
+          { echo "--- rustfmt 改动 ---"; git --no-pager diff --stat; git --no-pager diff; } | tee /tmp/fmt.log
 
       # 笔迹几何单测(纯数学, 不依赖 cairo DLL): 细分/轮廓的正确性在这里验
       - name: cargo test (inkgeom)
         shell: bash
         run: |
-          cargo test -p glaspen-core inkgeom:: -- --nocapture 2>&1 | tail -40
-          exit ${PIPESTATUS[0]}
+          cargo test -p glaspen-core inkgeom:: -- --nocapture > /tmp/test.log 2>&1
+          rc=$?
+          tail -40 /tmp/test.log
+          exit $rc
 
       # 设置面板(Flutter)可选: 失败也只是没有面板, 不影响笔迹本体出包
-      - name: Build Flutter settings (optional)
-        id: flutter
+      - name: Setup Flutter (optional)
         continue-on-error: true
         uses: subosito/flutter-action@v2
         with:
@@ -72,10 +78,43 @@ jobs:
       - name: cargo build --release
         shell: bash
         run: |
-          cargo build --release 2>&1 | tail -60
-          exit ${PIPESTATUS[0]}
+          cargo build --release > /tmp/build.log 2>&1
+          rc=$?
+          tail -60 /tmp/build.log
+          exit $rc
+
+      # 失败可读性: 把 error 行转成 ::error:: 注解(运行页直接看得到)
+      - name: 失败注解
+        if: failure()
+        shell: bash
+        run: |
+          for f in /tmp/build.log /tmp/test.log; do
+            [ -f "$f" ] || continue
+            echo "=== $f ==="
+            grep -E -A6 "^error(\[|:)" "$f" | head -80 | while IFS= read -r line; do
+              echo "::error::${line:0:300}"
+            done
+          done
+          exit 0
+
+      - name: 失败日志回写 ci-logs 分支
+        if: failure()
+        continue-on-error: true
+        shell: bash
+        run: |
+          { echo "# windows-build $(date -u +%FT%TZ)  ref=${{ github.ref_name }}"; \
+            for f in /tmp/fmt.log /tmp/test.log /tmp/build.log; do
+              [ -f "$f" ] && { echo; echo "===== $f ====="; tail -120 "$f"; };
+            done; } > ci-log.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B ci-logs
+          git add -f ci-log.txt
+          git commit -m "ci: windows-build 失败日志 (${{ github.ref_name }})" || true
+          git push -f origin ci-logs
 
       - name: 组装产物
+        if: success()
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -92,12 +131,13 @@ jobs:
             if (Test-Path "$flutter/data") { Copy-Item "$flutter/data" -Destination dist/data -Recurse }
             "flutter settings: 已打包"
           } else {
-            "flutter settings: 未构建(仅无面板, 笔迹功能不受影响)"
+            "flutter settings: 未构建(仅没有设置面板, 笔迹功能不受影响)"
           }
           Copy-Item README.md, LICENSE dist/ -ErrorAction SilentlyContinue
           Get-ChildItem dist | Select-Object Name, Length
 
       - uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: glaspen2-windows-x64
           path: dist/**
