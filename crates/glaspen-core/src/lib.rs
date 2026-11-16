@@ -27,6 +27,8 @@ pub mod cairo_dl;
 
 pub mod db;
 pub mod export;
+/// 笔迹几何(中心线细分 + 可变宽度轮廓): 实时绘制与静态渲染共用
+pub mod inkgeom;
 pub mod modeler;
 pub mod ocr;
 pub mod pagerender;
